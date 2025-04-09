@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import packImage from "./assets/pack.png";
 import logoImage from "./assets/smlogo.png";
 
-// Example color mapping for some schools
+
 const teamColors = {
   "Abilene Christian": "#4F2C1D",
   "Air Force": "#003087",
@@ -137,7 +137,7 @@ const teamColors = {
   "Kansas": "#0051BA",
   "Kansas City": "#002855",
   "Kansas State": "#512888",
-  "Kennesaw State": "#F1C400",
+  "Kennesaw State": "#ffc629",
   "Kent State": "#00205B",
   "Kentucky": "#0033A0",
   "LIU": "#000000",
@@ -240,7 +240,6 @@ const teamColors = {
   "Princeton": "#E77500",
   "Providence": "#000000",
   "Purdue": "#CFB991",
-  "Purdue Fort Wayne": "#231F20",
   "Queens": "#002147",
   "Quinnipiac": "#003366",
   "Radford": "#CE1126",
@@ -343,10 +342,10 @@ const teamColors = {
   "Oklahoma": "#841617",
   "Oklahoma State": "#FF7300",
   "Old Dominion": "#1E3A5F",
-  "Ole Miss": "#CE1126",
+  "Ole Miss": "#006BA6",
   "Omaha": "#000000",
   "Oral Roberts": "#002147",
-  "Oregon": "#FEE123",
+  "Oregon": "#154733",
   "Oregon State": "#DC4405",
   "Pacific": "#FF6A00",
   "Penn": "#011F5B",
@@ -360,7 +359,7 @@ const teamColors = {
   "Princeton": "#E77500",
   "Providence": "#000000",
   "Purdue": "#CFB991",
-  "Purdue Fort Wayne": "#231F20",
+  "Purdue Fort Wayne": "#6F727B",
   "Queens": "#002147",
   "Quinnipiac": "#003366",
   "Radford": "#CE1126",
