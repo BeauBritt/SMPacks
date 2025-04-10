@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import packImage from "./assets/pack.png";
 import logoImage from "./assets/smlogo.png";
 import flipSound from "./assets/flip.mp3";
+import packRipSound from "./assets/packRip.mp3";
+
 
 const teamColors = {
   "Abilene Christian": "#4F2C1D",
@@ -488,26 +490,11 @@ const teamColors = {
 };
 
 
-function getTextColor(bgColor) {
-  if (!bgColor) return "#fff";
-
- 
-  const color = bgColor.replace("#", "");
-  const r = parseInt(color.substr(0, 2), 16);
-  const g = parseInt(color.substr(2, 2), 16);
-  const b = parseInt(color.substr(4, 2), 16);
-
-  
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-  
-  return luminance > 0.6 ? "#000000" : "#ffffff";
-}
-
 export default function App() {
   const [authMode, setAuthMode] = useState("login");
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const packRip = new Audio(packRipSound);
 
   const [pack, setPack] = useState([]);
   const [opened, setOpened] = useState(false);
@@ -546,6 +533,10 @@ export default function App() {
     if (team.length >= 12) return;
     setWiggle(true);
     setTimeout(() => setWiggle(false), 600);
+
+    packRip.currentTime = 0;       
+    packRip.play();                
+
     fetch("http://127.0.0.1:3000/random_players")
       .then((res) => res.json())
       .then((data) => {
@@ -614,21 +605,25 @@ export default function App() {
         {team.length < 12 ? (
           !opened ? (
             <button
-              onClick={openPack}
-              onMouseEnter={() => setHovering(true)}
-              onMouseLeave={() => setHovering(false)}
-              style={{ border: "none", background: "none" }}
-            >
-              <img
-                src={packImage}
-                alt="pack"
-                style={{
-                  ...styles.packImage,
-                  ...(hovering ? styles.packImageHover : {}),
-                  ...(wiggle ? styles.packImageWiggle : {}),
-                }}
-              />
-            </button>
+            onClick={() => {
+              packRip.currentTime = 0;
+              packRip.play().catch((err) => console.warn("Audio play failed:", err)); // catch any issue
+            openPack();              
+            }}
+            onMouseEnter={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
+            style={{ border: "none", background: "none" }}
+          >
+            <img
+              src={packImage}
+              alt="pack"
+              style={{
+                ...styles.packImage,
+                ...(hovering ? styles.packImageHover : {}),
+                ...(wiggle ? styles.packImageWiggle : {}),
+              }}
+            />
+          </button>
           ) : (
             <div style={shake ? { ...styles.cardContainer, ...styles.shakeContainer } : styles.cardContainer}>
               {pack.map((player, i) => {
