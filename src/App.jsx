@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import packImage from "./assets/pack.png";
 import logoImage from "./assets/smlogo.png";
-
+import flipSound from "./assets/flip.mp3";
 
 const teamColors = {
   "Abilene Christian": "#4F2C1D",
@@ -359,7 +359,7 @@ const teamColors = {
   "Princeton": "#E77500",
   "Providence": "#000000",
   "Purdue": "#CFB991",
-  "Purdue Fort Wayne": "#6F727B",
+  "Purdue Fort Wayne": "#CFB991",
   "Queens": "#002147",
   "Quinnipiac": "#003366",
   "Radford": "#CE1126",
@@ -475,7 +475,7 @@ const teamColors = {
   "Western Illinois": "#660099",
   "Western Kentucky": "#D71A28",
   "Western Michigan": "#6A0032",
-  "Wichita State": "#FFCC00",
+  "Wichita State": "#27251F",
   "William & Mary": "#115740",
   "Winthrop": "#860038",
   "Wisconsin": "#C5050C",
@@ -487,6 +487,22 @@ const teamColors = {
   "Youngstown State": "#C8102E"
 };
 
+
+function getTextColor(bgColor) {
+  if (!bgColor) return "#fff";
+
+ 
+  const color = bgColor.replace("#", "");
+  const r = parseInt(color.substr(0, 2), 16);
+  const g = parseInt(color.substr(2, 2), 16);
+  const b = parseInt(color.substr(4, 2), 16);
+
+  
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  
+  return luminance > 0.6 ? "#000000" : "#ffffff";
+}
 
 export default function App() {
   const [authMode, setAuthMode] = useState("login");
@@ -500,16 +516,20 @@ export default function App() {
   const [flippedCards, setFlippedCards] = useState([]);
   const [hovering, setHovering] = useState(false);
   const [wiggle, setWiggle] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [revealedCards, setRevealedCards] = useState([]);
+  const [shake, setShake] = useState(false);
+  const flipAudio = new Audio(flipSound);
+  
 
   const handleAuth = async (mode) => {
-    const endpoint = mode === "login" ? "/login" : "/register";
+    const endpoint = mode === "login" ? "/user/login" : "/user/register";
     try {
-      const res = await fetch(`http://127.0.0.1:5000${endpoint}`, {
+      const res = await fetch(`http://127.0.0.1:3000${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       const data = await res.json();
       if (res.ok) {
         setUser(data.username);
@@ -526,22 +546,14 @@ export default function App() {
     if (team.length >= 12) return;
     setWiggle(true);
     setTimeout(() => setWiggle(false), 600);
-    fetch("http://127.0.0.1:5000/random_players")
+    fetch("http://127.0.0.1:3000/random_players")
       .then((res) => res.json())
       .then((data) => {
         setPack(data);
-        setFlippedCards(Array(data.length).fill(false));
+        setRevealedCards(Array(data.length).fill(false));
         setOpened(true);
       })
       .catch((err) => console.error("Fetch error:", err));
-  };
-
-  const flipCard = (index) => {
-    setFlippedCards((prev) => {
-      const updated = [...prev];
-      updated[index] = true;
-      return updated;
-    });
   };
 
   const selectPlayer = (player) => {
@@ -618,75 +630,109 @@ export default function App() {
               />
             </button>
           ) : (
-            <div style={{ textAlign: "center" }}>
-              <h3>Your Pack:</h3>
-              <div style={styles.cardContainer}>
-                {pack.map((player, i) => {
-                  const teamColor = teamColors[player["Team"]] || "#1f1f1f";
-                  return (
-                    <div key={i} style={styles.flipCardContainer} onClick={() => flipCard(i)}>
+            <div style={shake ? { ...styles.cardContainer, ...styles.shakeContainer } : styles.cardContainer}>
+              {pack.map((player, i) => {
+                const isRevealed = revealedCards[i];
+                const teamColor = teamColors[player["Team"]] || "#1f1f1f";
+
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      ...styles.flipCardContainer,
+                      ...(hoveredIndex === i ? styles.hoveredCard : {}),
+                    }}
+                    onMouseEnter={() => setHoveredIndex(i)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    onClick={() => {
+                      if (!isRevealed) {
+                        const updated = [...revealedCards];
+                        updated[i] = true;
+                        setRevealedCards(updated);
+                        flipAudio.currentTime = 0;
+                        flipAudio.play();
+                        setShake(true);
+                        setTimeout(() => setShake(false), 500);
+                      } else {
+                        selectPlayer(player);
+                      }
+                    }}
+                  >
+                    <div
+                      style={{
+                        ...styles.flipCard,
+                        transform: isRevealed ? "rotateY(180deg)" : "rotateY(0deg)",
+                      }}
+                    >
+                      <div style={styles.flipCardFront}>
+                        <p>?</p>
+                      </div>
                       <div
                         style={{
-                          ...styles.flipCard,
-                          transform: flippedCards[i] ? "rotateY(180deg)" : "rotateY(0deg)",
+                          ...styles.flipCardBack,
+                          backgroundColor: teamColor,
                         }}
                       >
-                        <div style={styles.flipCardFront}>
-                          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>?</p>
-                          <p>Click to Reveal</p>
-                        </div>
-                        <div
-                          style={{
-                            ...styles.flipCardBack,
-                            backgroundColor: teamColor,
-                          }}
-                          onClick={() => selectPlayer(player)}
-                        >
-                          <h3>{player["Player Name"]}</h3>
-                          <p><strong>Team:</strong> {player["Team"]}</p>
-                          <p><strong>Pos:</strong> {player["Pos"]}</p>
-                        </div>
+                        <h3>{player["Player Name"]}</h3>
+                        <p><strong>Team:</strong> {player["Team"]}</p>
+                        <p><strong>Pos:</strong> {player["Pos"]}</p>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
             </div>
           )
         ) : (
           <div style={{ textAlign: "center" }}>
             <h2>Your Final Team</h2>
-            <div style={styles.cardContainer}>
-            {team.map((player, i) => {
-            const teamColor = teamColors[player["Team"]] || "#1f1f1f";
-            return (
-          <div
-            key={i}
-              style={{
-             ...styles.teamCard,
-               backgroundColor: teamColor,
-      }}
-    >
-         <h3>{player["Player Name"]}</h3>
-          <p><strong>Team:</strong> {player["Team"]}</p>
-            <p><strong>Position:</strong> {player["Pos"]}</p>
-            <p>PTS: {player["PTS"]}</p>
-            <p>FG%: {player["FG%"]} | FT%: {player["FT%"]}</p>
-            <p>3P%: {player["3P%"]}</p>
-            <p>REB: {player["REB"]} | AST: {player["AST"]}</p>
-            <p>STL: {player["STL"]} | BLK: {player["BLK"]}</p>
-            <p><strong>OVR Grade:</strong> {player["OVR_Grade"]}</p>
-    </div>
-  );
-})}
+<div style={styles.teamGrid}>
+  {team.map((player, i) => {
+    const teamColor = teamColors[player["Team"]] || "#1f1f1f";
+    const ovr = player["OVR_Grade"];
 
+    const renderOVRSymbol = (ovr) => {
+      if (ovr >= 78) return "⭐";
+      if (ovr <= 73 && ovr >= 60) return "🗑️";
+      return "";
+    };
+
+    return (
+      <div
+        key={i}
+        style={{
+          ...styles.teamCard,
+          backgroundColor: teamColor,
+        }}
+      >
+        <h3 style={styles.outlinedText}>{player["Player Name"]}</h3>
+        <p style={styles.outlinedText}><strong>Team:</strong> {player["Team"]}</p>
+        <p style={styles.outlinedText}><strong>Pos:</strong> {player["Pos"]}</p>
+        <p style={styles.outlinedText}>PTS: {player["PTS"]}</p>
+        <p style={styles.outlinedText}>FG%: {player["FG%"]} | FT%: {player["FT%"]}</p>
+        <p style={styles.outlinedText}>3P%: {player["3P%"]}</p>
+        <p style={styles.outlinedText}>REB: {player["REB"]} | AST: {player["AST"]}</p>
+        <p style={styles.outlinedText}>STL: {player["STL"]} | BLK: {player["BLK"]}</p>
+        <p style={{ 
+          marginTop: "0.5rem", 
+          fontWeight: "bold", 
+          fontSize: "1.1rem", 
+          textShadow: styles.outlinedText.textShadow 
+        }}>
+          {renderOVRSymbol(ovr)} OVR: {ovr}
+        </p>
+      </div>
+    );
+})}
             </div>
             <h3 style={{ marginTop: "2rem" }}>🏆 Team Average OVR: {getAverageOVR()}</h3>
           </div>
         )}
       </div>
     </div>
+    
   );
+  
 }
 
 const styles = {
@@ -766,20 +812,62 @@ const styles = {
     border: "1px solid #ccc",
     fontSize: "1rem",
   },
-   cardContainer: {
+  cardContainer: {
     display: "grid",
-    gridTemplateColumns: "repeat(6, 1fr)",
-    justifyItems: "center",
-    alignItems: "start",
+    gridTemplateColumns: "repeat(5, 220px)",
+    justifyContent: "start",
     gap: "1rem",
     marginTop: "1rem",
-    width: "100%",
-    maxWidth: "100%",
-    padding: "0 2rem",
-    boxSizing: "border-box",
+    padding: "0 1rem",
   },
   
+  flipCardContainer: {
+    perspective: "1000px",
+    width: "220px",
+    height: "300px",
+  },
+  flipCard: {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    transformStyle: "preserve-3d",
+    transition: "transform 0.6s",
+  },
   
+  flipCardFront: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backfaceVisibility: "hidden",
+    backgroundColor: "#1f1f1f",
+    color: "#ffffff",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "2rem",
+    fontWeight: "bold",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.4)",
+  },
+  flipCardBack: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backfaceVisibility: "hidden",
+    transform: "rotateY(180deg)",
+    color: "#ffffff",
+    textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.4)",
+    cursor: "pointer",
+  },
+
   packCard: {
     border: "1px solid #ccc",
     padding: "1rem",
@@ -791,18 +879,30 @@ const styles = {
     color: "#ffffff",
     boxShadow: "0 2px 5px rgba(0,0,0,0.4)",
     cursor: "pointer",
+    gap: "1rem",
   },
   teamCard: {
+    width: "200px",
+    height: "320px",
     border: "1px solid #ccc",
     padding: "0.5rem",
     borderRadius: "8px",
-    width: "140px",
     fontSize: "0.8rem",
     backgroundColor: "#1f1f1f",
     color: "#ffffff",
     boxShadow: "0 2px 5px rgba(0,0,0,0.4)",
-    cursor: "pointer",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    textAlign: "center",
+    lineHeight: "0.5",
+    textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
   },
+  
+  
+  
  
   fullPageCentered: {
     display: "flex",
@@ -892,7 +992,9 @@ const styles = {
     borderRadius: "8px",
     boxShadow: "0 2px 5px rgba(0,0,0,0.4)",
     cursor: "pointer",
+    textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
   },
+  
 
   packImage: {
     width: "280px",
@@ -915,6 +1017,56 @@ const styles = {
     '75%': { transform: 'rotate(2deg)' },
     '100%': { transform: 'rotate(0deg)' },
   },
+  
+  revealCard: {
+    border: "1px solid #ccc",
+    padding: "1rem",
+    borderRadius: "8px",
+    width: "220px",
+    height: "300px",
+    fontSize: "1rem",
+    backgroundColor: "#1f1f1f",
+    color: "#ffffff",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.4)",
+    cursor: "pointer",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+  },
+  hoveredCard: {
+    transform: "scale(1.05) translateY(-5px)",
+    boxShadow: "0 0 15px 5px rgba(255, 255, 255, 0.4)",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+  },
+  shakeContainer: {
+    animation: "shake 0.4s",
+  },
+  "@keyframes shake": {
+    "0%": { transform: "translate(0px, 0px)" },
+    "25%": { transform: "translate(4px, -4px)" },
+    "50%": { transform: "translate(-4px, 4px)" },
+    "75%": { transform: "translate(4px, -4px)" },
+    "100%": { transform: "translate(0px, 0px)" },
+  },
+
+  teamGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(6, 1fr)", 
+    gridAutoRows: "auto",                 
+    gap: "1rem",
+    justifyItems: "center",
+    alignItems: "start",
+    padding: "1rem 2rem",
+    marginTop: "1rem",
+  },
+
+  outlinedText: {
+    textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+  }
+  
   
   
 };
