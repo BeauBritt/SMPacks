@@ -512,7 +512,7 @@ export default function App() {
   const handleAuth = async (mode) => {
     const endpoint = mode === "login" ? "/user/login" : "/user/register";
     try {
-      const res = await fetch(`http://127.0.0.1:5000${endpoint}`, {
+      const res = await fetch(`http://127.0.0.1:3000${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -537,7 +537,7 @@ export default function App() {
     packRip.currentTime = 0;       
     packRip.play();                
 
-    fetch("http://127.0.0.1:5000/random_players")
+    fetch("http://127.0.0.1:3000/random_players")
       .then((res) => res.json())
       .then((data) => {
         setPack(data);
