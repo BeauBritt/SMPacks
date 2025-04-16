@@ -616,16 +616,11 @@ export default function App() {
         borderRadius: "8px",
         marginBottom: "0.5rem",
         display: "flex",
-        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <span>#{i + 1} {entry.username}</span>
-        <strong>Avg OVR: {entry.avgOVR}</strong>
-      </div>
-      <div style={{ marginTop: "0.3rem", fontSize: "0.9rem", color: "#ccc" }}>
-        ⭐ Star Players: {entry.stars}
-      </div>
+      <span>#{i + 1} {entry.username ?? "Unknown"}</span>
+      <strong>Avg OVR: {entry.avgOVR ?? "?"}</strong>
     </div>
   ))
 )}
