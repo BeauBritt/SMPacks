@@ -25,6 +25,7 @@ export default function App() {
         });
         if (res.ok) {
           const data = await res.json();
+          console.log('Leaderboard data received:', data);
           setLeaderboard(data);
         } else {
           console.error("Failed to fetch leaderboard");
@@ -74,7 +75,13 @@ export default function App() {
   };
 
   const saveTeam = async () => {
+    console.log('Current team:', team);
+    if (!team || team.length === 0) {
+      alert('No team data to save!');
+      return;
+    }
     const avgOVR = team.reduce((sum, p) => sum + (p["OVR_Grade"] || 0), 0) / team.length;
+    console.log('Saving team with data:', { username: user, team, avgOVR });
     try {
       const res = await fetch("https://backend-sq7r.onrender.com/user/save_team", {
         method: "POST",
@@ -83,9 +90,11 @@ export default function App() {
           username: user,
           team,
           avgOVR: parseFloat(avgOVR.toFixed(1)),
+          players: team,
         }),
       });
       const data = await res.json();
+      console.log('Server response:', data);
       if (res.ok) {
         alert("Team saved successfully!");
       } else {
