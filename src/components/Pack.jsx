@@ -16,6 +16,7 @@ export const Pack = ({ pack, onSelectPlayer, onOpenPack }) => {
     setWiggle(true);
     setTimeout(() => setWiggle(false), 600);
     new Audio(packRipSound).play();
+    setRevealedCards([]);
     onOpenPack();
   };
 
