@@ -721,6 +721,50 @@ export default function App() {
 })}
             </div>
             <h3 style={{ marginTop: "2rem" }}>🏆 Team Average OVR: {getAverageOVR()}</h3>
+
+            <div style={{ marginTop: "1rem", display: "flex", gap: "1rem", justifyContent: "center" }}>
+  <button
+    style={styles.button}
+    onClick={async () => {
+      const avgOVR = getAverageOVR();
+      try {
+        const res = await fetch("https://backend-sq7r.onrender.com/user/save_team", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: user,
+            team,
+            avgOVR: parseFloat(avgOVR),
+          }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert("Team saved successfully!");
+        } else {
+          alert(data.error || "Failed to save team");
+        }
+      } catch (err) {
+        console.error("Save error:", err);
+        alert("Could not connect to server.");
+      }
+    }}
+  >
+    💾 Save Team
+  </button>
+
+  <button
+    style={{ ...styles.button, backgroundColor: "#6c757d" }}
+    onClick={() => {
+      setTeam([]);
+      setPack([]);
+      setOpened(false);
+      setPackCount(0);
+      setRevealedCards([]);
+    }}
+  >
+    🔄 Start New Team
+  </button>
+</div>
           </div>
         )}
       </div>
