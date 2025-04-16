@@ -5,7 +5,7 @@ import packImage from '../assets/pack.png';
 import flipSound from '../assets/flip.mp3';
 import packRipSound from '../assets/packRip.mp3';
 
-export const Pack = ({ pack, onSelectPlayer, onOpenPack }) => {
+export const Pack = ({ pack, onSelectPlayer, onOpenPack, currentPlayers, maxPlayers }) => {
   const [hovering, setHovering] = useState(false);
   const [wiggle, setWiggle] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -37,6 +37,15 @@ export const Pack = ({ pack, onSelectPlayer, onOpenPack }) => {
     <div style={styles.stackContainer}>
       <h1 style={styles.title}>Welcome!</h1>
       <h2 style={styles.subtitle}>Pick a Player</h2>
+      
+      <div style={{
+        marginBottom: '1rem',
+        fontSize: '1.2rem',
+        color: '#fff',
+        textAlign: 'center'
+      }}>
+        Players: {currentPlayers}/{maxPlayers}
+      </div>
 
       {!pack.length ? (
         <button

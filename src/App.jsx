@@ -12,6 +12,7 @@ export default function App() {
   const [team, setTeam] = useState([]);
   const [showLeaderboard, setShowLeaderboard] = useState(true);
   const [leaderboard, setLeaderboard] = useState([]);
+  const maxPlayers = 12; // Maximum number of players in a team
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -60,7 +61,7 @@ export default function App() {
   };
 
   const openPack = () => {
-    if (team.length >= 12) return;
+    if (team.length >= maxPlayers) return;
     fetch("https://backend-sq7r.onrender.com/random_players")
       .then((res) => res.json())
       .then((data) => {
@@ -119,7 +120,7 @@ export default function App() {
     return <Leaderboard leaderboard={leaderboard} onStartGame={() => setShowLeaderboard(false)} />;
   }
 
-  if (team.length >= 12) {
+  if (team.length >= maxPlayers) {
     return <Team team={team} onSaveTeam={saveTeam} onNewTeam={startNewTeam} />;
   }
 
@@ -129,6 +130,8 @@ export default function App() {
         pack={pack}
         onSelectPlayer={selectPlayer}
         onOpenPack={openPack}
+        currentPlayers={team.length}
+        maxPlayers={maxPlayers}
       />
     </div>
   );
