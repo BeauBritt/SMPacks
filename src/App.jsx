@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import packImage from "./assets/pack.png";
 import logoImage from "./assets/smlogo.png";
 import flipSound from "./assets/flip.mp3";
@@ -325,126 +325,6 @@ const teamColors = {
   "UMass": "#881C1C",
   "UMass Lowell": "#002147",
   "UNC Asheville": "#002147",
-  "North Dakota": "#009A44",
-  "North Dakota State": "#FFC82D",
-  "North Florida": "#003366",
-  "North Texas": "#059033",
-  "Northeastern": "#CC0000",
-  "Northern Arizona": "#003466",
-  "Northern Colorado": "#002147",
-  "Northern Illinois": "#D50032",
-  "Northern Iowa": "#46166B",
-  "Northern Kentucky": "#FFC72C",
-  "Northwestern": "#4E2A84",
-  "Northwestern State": "#4D1979",
-  "Notre Dame": "#0C2340",
-  "Oakland": "#C5B783",
-  "Ohio": "#0D6030",
-  "Ohio State": "#BA0C2F",
-  "Oklahoma": "#841617",
-  "Oklahoma State": "#FF7300",
-  "Old Dominion": "#1E3A5F",
-  "Ole Miss": "#006BA6",
-  "Omaha": "#000000",
-  "Oral Roberts": "#002147",
-  "Oregon": "#154733",
-  "Oregon State": "#DC4405",
-  "Pacific": "#FF6A00",
-  "Penn": "#011F5B",
-  "Penn State": "#002D62",
-  "Pepperdine": "#00205B",
-  "Pittsburgh": "#003594",
-  "Portland": "#5E2A87",
-  "Portland State": "#154734",
-  "Prairie View A&M": "#46166B",
-  "Presbyterian": "#005BAC",
-  "Princeton": "#E77500",
-  "Providence": "#000000",
-  "Purdue": "#CFB991",
-  "Purdue Fort Wayne": "#CFB991",
-  "Queens": "#002147",
-  "Quinnipiac": "#003366",
-  "Radford": "#CE1126",
-  "Rhode Island": "#6BA3DB",
-  "Rice": "#00205B",
-  "Richmond": "#990000",
-  "Rider": "#862633",
-  "Robert Morris": "#041E42",
-  "Rutgers": "#CC0033",
-  "SIU Edwardsville": "#E35205",
-  "SMU": "#0033A0",
-  "Sacramento State": "#043927",
-  "Sacred Heart": "#C8102E",
-  "Saint Francis (PA)": "#E35205",
-  "Saint Joseph's": "#A6192E",
-  "Saint Louis": "#003DA5",
-  "Saint Mary's": "#C8102E",
-  "Saint Peter's": "#002147",
-  "Sam Houston": "#FF6A00",
-  "Samford": "#0033A0",
-  "San Diego": "#002147",
-  "San Diego State": "#A6192E",
-  "San Francisco": "#006747",
-  "San Jose State": "#0055A2",
-  "Santa Clara": "#A6192E",
-  "Seattle U": "#C8102E",
-  "Seton Hall": "#0055A2",
-  "Siena": "#006747",
-  "South Alabama": "#002147",
-  "South Carolina": "#73000A",
-  "South Carolina State": "#73000A",
-  "South Dakota": "#C8102E",
-  "South Dakota State": "#0033A0",
-  "Southeast Missouri State": "#E32636",
-  "Southeastern Louisiana": "#006747",
-  "Southern": "#002147",
-  "Southern California": "#990000",
-  "Southern Illinois": "#660000",
-  "Southern Indiana": "#002147",
-  "Southern Mississippi": "#FFC72C",
-  "Southern Utah": "#CE1126",
-  "St. Bonaventure": "#6F4E37",
-  "St. John's": "#C8102E",
-  "St. Thomas": "#4E2A84",
-  "Stanford": "#8C1515",
-  "Stephen F. Austin": "#4E2A84",
-  "Stetson": "#006747",
-  "Stonehill": "#4E2A84",
-  "Stony Brook": "#C8102E",
-  "Syracuse": "#D44500",
-  "TCU": "#4D1979",
-  "Tarleton State": "#4D1979",
-  "Temple": "#9D2235",
-  "Tennessee": "#FF8200",
-  "Tennessee State": "#0033A0",
-  "Tennessee Tech": "#4F2683",
-  "Texas": "#BF5700",
-  "Texas A&M": "#500000",
-  "Texas A&M-Commerce": "#002147",
-  "Texas A&M-Corpus Christi": "#006747",
-  "Texas Southern": "#500000",
-  "Texas State": "#501214",
-  "Texas Tech": "#CC0000",
-  "The Citadel": "#002147",
-  "Toledo": "#002147",
-  "Towson": "#FFD700",
-  "Troy": "#660000",
-  "Tulane": "#006747",
-  "Tulsa": "#0033A0",
-  "UAB": "#006747",
-  "UC Davis": "#002147",
-  "UC Irvine": "#002147",
-  "UC Riverside": "#002147",
-  "UC San Diego": "#002147",
-  "UC Santa Barbara": "#002147",
-  "UCF": "#BA9B37",
-  "UCLA": "#2774AE",
-  "UIC": "#CE1126",
-  "UL Monroe": "#660000",
-  "UMBC": "#FFC72C",
-  "UMass": "#881C1C",
-  "UMass Lowell": "#002147",
-  "UNC Asheville": "#002147",
   "UNC Greensboro": "#003366",
   "UNC Wilmington": "#006666",
   "UNLV": "#BA0C2F",
@@ -510,6 +390,32 @@ export default function App() {
   const [showLeaderboard, setShowLeaderboard] = useState(true);
   const [leaderboard, setLeaderboard] = useState([]);
   
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const res = await fetch("https://backend-sq7r.onrender.com/user/leaderboard", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setLeaderboard(data);
+        } else {
+          console.error("Failed to fetch leaderboard");
+        }
+      } catch (err) {
+        console.error("Error fetching leaderboard:", err);
+      }
+    };
+
+    if (user) {
+      fetchLeaderboard();
+    }
+  }, [user]);
 
   const handleAuth = async (mode) => {
     const endpoint = mode === "login" ? "/user/login" : "/user/register";
@@ -605,29 +511,49 @@ export default function App() {
         <h1 style={{ fontSize: "2rem" }}>🏆 Leaderboard</h1>
         <h2>Top Saved Teams</h2>
         {leaderboard.length === 0 ? (
-  <p>No teams saved yet.</p>
-) : (
-  leaderboard.map((entry, i) => (
-    <div
-      key={i}
-      style={{
-        background: "#2c2c2c",
-        padding: "1rem",
-        borderRadius: "8px",
-        marginBottom: "0.5rem",
-        display: "flex",
-        justifyContent: "space-between",
-      }}
-    >
-      <span>#{i + 1} {entry.username ?? "Unknown"}</span>
-      <strong>Avg OVR: {entry.avgOVR ?? "?"}</strong>
-    </div>
-  ))
-)}
+          <p>Loading leaderboard data...</p>
+        ) : (
+          <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+            {leaderboard.map((entry, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#2c2c2c",
+                  padding: "1rem",
+                  borderRadius: "8px",
+                  marginBottom: "0.5rem",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div>
+                  <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>#{i + 1}</span>
+                  <span style={{ marginLeft: "1rem" }}>{entry.username ?? "Unknown"}</span>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <strong>Avg OVR: {entry.avgOVR ?? "?"}</strong>
+                  <div style={{ fontSize: "0.9rem", color: "#aaa" }}>
+                    Team Size: {entry.team?.length ?? 0}/12
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <button
           onClick={() => setShowLeaderboard(false)}
-          style={{ marginTop: "1rem", padding: "0.75rem 1.5rem", fontSize: "1rem" }}
+          style={{
+            marginTop: "1rem",
+            padding: "0.75rem 1.5rem",
+            fontSize: "1rem",
+            backgroundColor: "#3f51b5",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+          }}
         >
           🎮 Start Opening Packs
         </button>
