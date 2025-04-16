@@ -14,28 +14,29 @@ export default function App() {
   const [leaderboard, setLeaderboard] = useState([]);
   const maxPlayers = 12; // Maximum number of players in a team
 
-  useEffect(() => {
-    const fetchLeaderboard = async () => {
-      try {
-        const res = await fetch("https://backend-sq7r.onrender.com/user/leaderboard", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          console.log('Leaderboard data received:', data);
-          setLeaderboard(data);
-        } else {
-          console.error("Failed to fetch leaderboard");
+  const fetchLeaderboard = async () => {
+    try {
+      const response = await fetch('https://backend-sq7r.onrender.com/user/leaderboard', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         }
-      } catch (err) {
-        console.error("Error fetching leaderboard:", err);
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch leaderboard');
       }
-    };
+      
+      const data = await response.json();
+      console.log('Leaderboard data:', data);
+      setLeaderboard(data);
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+    }
+  };
 
+  useEffect(() => {
     if (user) {
       fetchLeaderboard();
     }
@@ -52,6 +53,7 @@ export default function App() {
       const data = await res.json();
       if (res.ok) {
         setUser(data.username);
+        localStorage.setItem('username', data.username);
       } else {
         alert(data.error);
       }
@@ -98,6 +100,7 @@ export default function App() {
       console.log('Server response:', data);
       if (res.ok) {
         alert("Team saved successfully!");
+        fetchLeaderboard(); // Refresh leaderboard after saving
       } else {
         alert(data.error || "Failed to save team");
       }
@@ -114,6 +117,7 @@ export default function App() {
 
   const returnToLeaderboard = () => {
     setShowLeaderboard(true);
+    fetchLeaderboard(); // Refresh leaderboard when returning
   };
 
   if (!user) {
@@ -121,16 +125,24 @@ export default function App() {
   }
 
   if (showLeaderboard) {
-    return <Leaderboard leaderboard={leaderboard} onStartGame={() => setShowLeaderboard(false)} />;
+    return (
+      <Leaderboard 
+        leaderboard={leaderboard} 
+        onStartGame={() => setShowLeaderboard(false)} 
+        onRefreshLeaderboard={fetchLeaderboard} 
+      />
+    );
   }
 
   if (team.length >= maxPlayers) {
-    return <Team 
-      team={team} 
-      onSaveTeam={saveTeam} 
-      onNewTeam={startNewTeam}
-      onReturnToLeaderboard={returnToLeaderboard}
-    />;
+    return (
+      <Team 
+        team={team} 
+        onSaveTeam={saveTeam} 
+        onNewTeam={startNewTeam}
+        onReturnToLeaderboard={returnToLeaderboard}
+      />
+    );
   }
 
   return (

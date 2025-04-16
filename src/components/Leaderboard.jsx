@@ -1,16 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styles } from '../styles/styles';
 import { TeamDetails } from './TeamDetails';
+import { SavedTeams } from './SavedTeams';
 
-export const Leaderboard = ({ leaderboard, onStartGame }) => {
+export const Leaderboard = ({ leaderboard, onStartGame, onRefreshLeaderboard }) => {
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const [showSavedTeams, setShowSavedTeams] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Refresh leaderboard when saved teams modal is closed
+  useEffect(() => {
+    if (!showSavedTeams && onRefreshLeaderboard) {
+      onRefreshLeaderboard();
+    }
+  }, [showSavedTeams, onRefreshLeaderboard]);
+
   const handleTeamClick = async (entry) => {
-    console.log('Clicked entry:', entry);
     setLoading(true);
     try {
-      console.log('Fetching team data for:', entry.username);
+      console.log('Clicked entry:', entry);
+      console.log('Fetching team for username:', entry.username);
+      
       const response = await fetch(`https://backend-sq7r.onrender.com/user/user_teams/${entry.username}`, {
         method: 'GET',
         headers: {
@@ -20,31 +30,36 @@ export const Leaderboard = ({ leaderboard, onStartGame }) => {
       });
       
       console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
       
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', errorText);
-        throw new Error(`Failed to fetch team data: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
-      console.log('Team data received:', data);
+      console.log('Received data:', data);
       
-      // The data is an array with a single object containing team/players
-      if (Array.isArray(data) && data.length > 0) {
-        const teamData = data[0];
-        if (teamData.players) {
-          setSelectedTeam(teamData.players);
-        } else if (teamData.team) {
-          setSelectedTeam(teamData.team);
+      // Handle both array and object responses
+      let teamData;
+      if (Array.isArray(data)) {
+        if (data.length > 0) {
+          teamData = data[0].players || data[0].team;
         } else {
-          console.error('No team data found in response:', teamData);
+          throw new Error('No team data found');
         }
       } else {
-        console.error('Invalid data structure:', data);
+        teamData = data.players || data.team;
       }
+      
+      if (!teamData) {
+        throw new Error('No team data found in response');
+      }
+      
+      setSelectedTeam(teamData);
     } catch (error) {
-      console.error('Error fetching team data:', error);
+      console.error('Error fetching team:', error);
       console.error('Error details:', {
         message: error.message,
         stack: error.stack
@@ -55,126 +70,73 @@ export const Leaderboard = ({ leaderboard, onStartGame }) => {
   };
 
   return (
-    <div style={{ 
-      padding: "2rem", 
-      background: "#1f1f1f", 
-      color: "#fff", 
-      minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center"
-    }}>
-      <div style={{ 
-        maxWidth: "800px", 
-        width: "100%",
-        backgroundColor: "rgba(0,0,0,0.3)",
-        padding: "2rem",
-        borderRadius: "12px",
-        boxShadow: "0 0 20px rgba(0,0,0,0.4)"
-      }}>
-        <h1 style={{ 
-          fontSize: "2.5rem", 
-          marginBottom: "2rem",
-          textAlign: "center",
-          color: "#fff"
-        }}>🏆 Leaderboard</h1>
+    <div style={styles.fullPageCentered}>
+      <div style={{ maxWidth: '800px', width: '100%', padding: '2rem' }}>
+        <h1 style={{ color: '#fff', textAlign: 'center', marginBottom: '2rem' }}>🏆 Leaderboard</h1>
         
-        <h2 style={{ 
-          marginBottom: "1.5rem",
-          textAlign: "center",
-          color: "#fff"
-        }}>Top Saved Teams</h2>
-        
-        {leaderboard.length === 0 ? (
-          <p style={{ textAlign: "center" }}>Loading leaderboard data...</p>
-        ) : (
-          <div style={{ 
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem"
-          }}>
-            {leaderboard.map((entry, i) => (
-              <div
-                key={i}
-                onClick={() => handleTeamClick(entry)}
-                style={{
-                  background: "rgba(255,255,255,0.1)",
-                  padding: "1.2rem",
-                  borderRadius: "8px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-                  <span style={{ 
-                    fontSize: "1.4rem", 
-                    fontWeight: "bold",
-                    minWidth: "3.5rem",
-                    textAlign: "center",
-                    color: "#fff"
-                  }}>
-                    #{i + 1}
-                  </span>
-                  <span style={{ 
-                    fontSize: "1.2rem",
-                    fontWeight: "500",
-                    color: "#fff"
-                  }}>
-                    {entry.username ?? "Unknown"}
-                  </span>
-                </div>
-                <div style={{ 
-                  fontSize: "1.2rem",
-                  fontWeight: "bold",
-                  color: "#4CAF50",
-                  marginLeft: "2rem"
-                }}>
-                  Avg OVR: {entry.avgOVR ?? "?"}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <div style={{ 
+          display: 'flex', 
+          gap: '1rem', 
+          justifyContent: 'center',
+          marginBottom: '2rem'
+        }}>
+          <button
+            style={styles.button}
+            onClick={onStartGame}
+          >
+            🎮 Open Pack
+          </button>
+          
+          <button
+            style={{ ...styles.button, backgroundColor: '#4CAF50' }}
+            onClick={() => setShowSavedTeams(true)}
+          >
+            📋 View Saved Teams
+          </button>
+        </div>
 
-        <button
-          onClick={onStartGame}
-          style={{
-            marginTop: "2rem",
-            padding: "0.75rem 1.5rem",
-            fontSize: "1.1rem",
-            backgroundColor: "#3f51b5",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-            width: "100%",
-            transition: "all 0.3s ease"
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.transform = "translateY(-2px)";
-            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
-          }}
-        >
-          🎮 Start Opening Packs
-        </button>
+        <div style={{
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          borderRadius: '12px',
+          padding: '1rem',
+          overflow: 'auto',
+          maxHeight: '60vh'
+        }}>
+          {leaderboard.slice(0, 10).map((entry, index) => (
+            <div
+              key={index}
+              onClick={() => handleTeamClick(entry)}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '1rem',
+                backgroundColor: 'rgba(255,255,255,0.05)',
+                borderRadius: '8px',
+                marginBottom: '0.5rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              <div style={{ color: '#fff', fontSize: '1.1rem' }}>
+                {index + 1}. {entry.username}
+              </div>
+              <div style={{ color: '#4CAF50', fontSize: '1.1rem' }}>
+                Avg OVR: {entry.avgOVR}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
       {loading && (
         <div style={{
           position: 'fixed',
@@ -182,19 +144,27 @@ export const Leaderboard = ({ leaderboard, onStartGame }) => {
           left: 0,
           right: 0,
           bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.7)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: 'rgba(0,0,0,0.7)',
           zIndex: 1000
         }}>
-          <div style={{ color: '#fff', fontSize: '1.5rem' }}>Loading team data...</div>
+          <div style={{ color: '#fff', fontSize: '1.5rem' }}>Loading team details...</div>
         </div>
       )}
+
       {selectedTeam && (
-        <TeamDetails 
-          team={selectedTeam} 
-          onClose={() => setSelectedTeam(null)} 
+        <TeamDetails
+          team={selectedTeam}
+          onClose={() => setSelectedTeam(null)}
+        />
+      )}
+
+      {showSavedTeams && (
+        <SavedTeams
+          username={localStorage.getItem('username')}
+          onClose={() => setShowSavedTeams(false)}
         />
       )}
     </div>
