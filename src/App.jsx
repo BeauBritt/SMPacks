@@ -507,6 +507,8 @@ export default function App() {
   const [revealedCards, setRevealedCards] = useState([]);
   const [shake, setShake] = useState(false);
   const flipAudio = new Audio(flipSound);
+  const [showLeaderboard, setShowLeaderboard] = useState(true);
+  const [leaderboard, setLeaderboard] = useState([]);
   
 
   const handleAuth = async (mode) => {
@@ -528,6 +530,7 @@ export default function App() {
       console.error("Auth error:", err);
     }
   };
+  
 
   const openPack = () => {
     if (team.length >= 12) return;
@@ -594,7 +597,49 @@ export default function App() {
         </div>
       </div>
     );
+    
   }
+  else if (showLeaderboard) {
+    return (
+      <div style={{ padding: "2rem", background: "#1f1f1f", color: "#fff", minHeight: "100vh" }}>
+        <h1 style={{ fontSize: "2rem" }}>🏆 Leaderboard</h1>
+        <h2>Top Saved Teams</h2>
+        {leaderboard.length === 0 ? (
+  <p>No teams saved yet.</p>
+) : (
+  leaderboard.map((entry, i) => (
+    <div
+      key={i}
+      style={{
+        background: "#2c2c2c",
+        padding: "1rem",
+        borderRadius: "8px",
+        marginBottom: "0.5rem",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <span>#{i + 1} {entry.username}</span>
+        <strong>Avg OVR: {entry.avgOVR}</strong>
+      </div>
+      <div style={{ marginTop: "0.3rem", fontSize: "0.9rem", color: "#ccc" }}>
+        ⭐ Star Players: {entry.stars}
+      </div>
+    </div>
+  ))
+)}
+
+        <button
+          onClick={() => setShowLeaderboard(false)}
+          style={{ marginTop: "1rem", padding: "0.75rem 1.5rem", fontSize: "1rem" }}
+        >
+          🎮 Start Opening Packs
+        </button>
+      </div>
+    );
+  }
+  
 
   return (
     <div style={styles.fullPageCentered}>
