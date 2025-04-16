@@ -508,8 +508,8 @@ export default function App() {
   else if (showLeaderboard) {
     return (
       <div style={{ padding: "2rem", background: "#1f1f1f", color: "#fff", minHeight: "100vh" }}>
-        <h1 style={{ fontSize: "2rem" }}>🏆 Leaderboard</h1>
-        <h2>Top Saved Teams</h2>
+        <h1 style={{ fontSize: "2rem", marginBottom: "1.5rem" }}>🏆 Leaderboard</h1>
+        <h2 style={{ marginBottom: "1.5rem" }}>Top Saved Teams</h2>
         {leaderboard.length === 0 ? (
           <p>Loading leaderboard data...</p>
         ) : (
@@ -519,23 +519,38 @@ export default function App() {
                 key={i}
                 style={{
                   background: "#2c2c2c",
-                  padding: "1rem",
+                  padding: "1.2rem",
                   borderRadius: "8px",
-                  marginBottom: "0.5rem",
+                  marginBottom: "1.5rem",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
                 }}
               >
-                <div>
-                  <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>#{i + 1}</span>
-                  <span style={{ marginLeft: "1rem" }}>{entry.username ?? "Unknown"}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+                  <span style={{ 
+                    fontSize: "1.4rem", 
+                    fontWeight: "bold",
+                    minWidth: "3.5rem",
+                    textAlign: "center"
+                  }}>
+                    #{i + 1}
+                  </span>
+                  <span style={{ 
+                    fontSize: "1.2rem",
+                    fontWeight: "500"
+                  }}>
+                    {entry.username ?? "Unknown"}
+                  </span>
                 </div>
-                <div style={{ textAlign: "right" }}>
-                  <strong>Avg OVR: {entry.avgOVR ?? "?"}</strong>
-                  <div style={{ fontSize: "0.9rem", color: "#aaa" }}>
-                    Team Size: {entry.team?.length ?? 0}/12
-                  </div>
+                <div style={{ 
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                  color: "#4CAF50",
+                  marginLeft: "2rem"
+                }}>
+                  Avg OVR: {entry.avgOVR ?? "?"}
                 </div>
               </div>
             ))}
@@ -545,14 +560,15 @@ export default function App() {
         <button
           onClick={() => setShowLeaderboard(false)}
           style={{
-            marginTop: "1rem",
+            marginTop: "2rem",
             padding: "0.75rem 1.5rem",
-            fontSize: "1rem",
+            fontSize: "1.1rem",
             backgroundColor: "#3f51b5",
             color: "#fff",
             border: "none",
             borderRadius: "8px",
             cursor: "pointer",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
           }}
         >
           🎮 Start Opening Packs
