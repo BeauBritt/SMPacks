@@ -112,6 +112,10 @@ export default function App() {
     setPack([]);
   };
 
+  const returnToLeaderboard = () => {
+    setShowLeaderboard(true);
+  };
+
   if (!user) {
     return <Auth onAuth={handleAuth} onModeChange={setAuthMode} />;
   }
@@ -121,7 +125,12 @@ export default function App() {
   }
 
   if (team.length >= maxPlayers) {
-    return <Team team={team} onSaveTeam={saveTeam} onNewTeam={startNewTeam} />;
+    return <Team 
+      team={team} 
+      onSaveTeam={saveTeam} 
+      onNewTeam={startNewTeam}
+      onReturnToLeaderboard={returnToLeaderboard}
+    />;
   }
 
   return (

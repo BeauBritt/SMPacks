@@ -2,7 +2,7 @@ import React from 'react';
 import { styles } from '../styles/styles';
 import { teamColors } from '../styles/theme';
 
-export const Team = ({ team, onSaveTeam, onNewTeam }) => {
+export const Team = ({ team, onSaveTeam, onNewTeam, onReturnToLeaderboard }) => {
   const getAverageOVR = () => {
     const total = team.reduce((sum, p) => sum + (p["OVR_Grade"] || 0), 0);
     return (total / team.length).toFixed(1);
@@ -65,6 +65,13 @@ export const Team = ({ team, onSaveTeam, onNewTeam }) => {
           onClick={onNewTeam}
         >
           🔄 Start New Team
+        </button>
+
+        <button
+          style={{ ...styles.button, backgroundColor: "#4CAF50" }}
+          onClick={onReturnToLeaderboard}
+        >
+          🏆 Return to Leaderboard
         </button>
       </div>
     </div>
