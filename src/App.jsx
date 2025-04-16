@@ -67,12 +67,36 @@ export default function App() {
     fetch("https://backend-sq7r.onrender.com/random_players")
       .then((res) => res.json())
       .then((data) => {
-        setPack(data);
+        // Filter out players that are already in the team
+        const availablePlayers = data.filter(player => 
+          !team.some(existingPlayer => 
+            existingPlayer['Player Name'] === player['Player Name'] && 
+            existingPlayer.Team === player.Team
+          )
+        );
+        
+        if (availablePlayers.length === 0) {
+          alert('No new players available in this pack!');
+          return;
+        }
+        
+        setPack(availablePlayers);
       })
       .catch((err) => console.error("Fetch error:", err));
   };
 
   const selectPlayer = (player) => {
+    // Check if player is already in the team
+    const isDuplicate = team.some(existingPlayer => 
+      existingPlayer['Player Name'] === player['Player Name'] && 
+      existingPlayer.Team === player.Team
+    );
+
+    if (isDuplicate) {
+      alert('This player is already in your team!');
+      return;
+    }
+
     setTeam([...team, player]);
     setPack([]);
   };
