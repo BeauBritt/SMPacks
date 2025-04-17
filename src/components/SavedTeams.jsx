@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { styles } from '../styles/styles';
 import { teamColors } from '../styles/teamColors';
+import { marchMadnessTeams } from '../data/marchMadnessTeams';
 
 export const SavedTeams = ({ username, onClose }) => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [error, setError] = useState(null);
+
+  const isMarchMadnessPlayer = (team) => {
+    return marchMadnessTeams.includes(team);
+  };
+
+  const getAverageOVR = (team) => {
+    if (!team || team.length === 0) return 0;
+    const sum = team.reduce((acc, player) => acc + (parseFloat(player.OVR_Grade) || 0), 0);
+    return (sum / team.length).toFixed(1);
+  };
+
+  const renderOVRSymbol = (ovr) => {
+    if (!ovr) return '❓';
+    const num = parseFloat(ovr);
+    if (num >= 90) return '⭐';
+    if (num >= 80) return '🌟';
+    if (num >= 70) return '✨';
+    return '🗑️';
+  };
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -50,20 +70,6 @@ export const SavedTeams = ({ username, onClose }) => {
       fetchTeams();
     }
   }, [username]);
-
-  const getAverageOVR = (team) => {
-    if (!team || team.length === 0) return 0;
-    const sum = team.reduce((acc, player) => acc + (player.OVR_Grade || 0), 0);
-    return (sum / team.length).toFixed(1);
-  };
-
-  const renderOVRSymbol = (ovr) => {
-    if (!ovr) return '❓';
-    if (ovr >= 90) return '⭐';
-    if (ovr >= 80) return '🌟';
-    if (ovr >= 70) return '✨';
-    return '🗑️';
-  };
 
   if (loading) {
     return (
@@ -131,9 +137,28 @@ export const SavedTeams = ({ username, onClose }) => {
                   backgroundColor: 'rgba(255,255,255,0.1)',
                   padding: '1rem',
                   borderRadius: '8px',
-                  borderLeft: `4px solid ${teamColors[player.Team] || '#666'}`
+                  borderLeft: `4px solid ${teamColors[player.Team] || '#666'}`,
+                  position: 'relative'
                 }}
               >
+                {isMarchMadnessPlayer(player.Team) && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '0.5rem',
+                    right: '0.5rem',
+                    backgroundColor: '#FFD700',
+                    color: '#000',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '4px',
+                    fontSize: '0.9rem',
+                    fontWeight: 'bold',
+                    zIndex: 1,
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                    letterSpacing: '0.05em'
+                  }}>
+                    MM
+                  </div>
+                )}
                 <div style={{
                   display: 'flex',
                   justifyContent: 'space-between',

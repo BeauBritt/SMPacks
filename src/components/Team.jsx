@@ -1,6 +1,7 @@
 import React from 'react';
 import { styles } from '../styles/styles';
 import { teamColors } from '../styles/theme';
+import { marchMadnessTeams } from '../data/marchMadnessTeams';
 
 export const Team = ({ team, onSaveTeam, onNewTeam, onReturnToLeaderboard }) => {
   const getAverageOVR = () => {
@@ -9,9 +10,16 @@ export const Team = ({ team, onSaveTeam, onNewTeam, onReturnToLeaderboard }) => 
   };
 
   const renderOVRSymbol = (ovr) => {
-    if (ovr >= 78) return "⭐";
-    if (ovr <= 73 && ovr >= 60) return "🗑️";
-    return "";
+    if (!ovr) return '❓';
+    const num = parseFloat(ovr);
+    if (num >= 90) return '⭐';
+    if (num >= 80) return '🌟';
+    if (num >= 70) return '✨';
+    return '🗑️';
+  };
+
+  const isMarchMadnessPlayer = (team) => {
+    return marchMadnessTeams.includes(team);
   };
 
   return (
@@ -28,8 +36,27 @@ export const Team = ({ team, onSaveTeam, onNewTeam, onReturnToLeaderboard }) => 
               style={{
                 ...styles.teamCard,
                 backgroundColor: teamColor,
+                position: 'relative'
               }}
             >
+              {isMarchMadnessPlayer(player["Team"]) && (
+                <div style={{
+                  position: 'absolute',
+                  top: '0.25rem',
+                  right: '0.25rem',
+                  backgroundColor: '#FFD700',
+                  color: '#000',
+                  padding: '0.15rem 0.3rem',
+                  borderRadius: '4px',
+                  fontSize: '0.75rem',
+                  fontWeight: 'bold',
+                  zIndex: 1,
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                  letterSpacing: '0.05em'
+                }}>
+                  MM
+                </div>
+              )}
               <h3 style={styles.outlinedText}>{player["Player Name"]}</h3>
               <p style={styles.outlinedText}><strong>Team:</strong> {player["Team"]}</p>
               <p style={styles.outlinedText}><strong>Pos:</strong> {player["Pos"]}</p>
@@ -42,7 +69,8 @@ export const Team = ({ team, onSaveTeam, onNewTeam, onReturnToLeaderboard }) => 
                 marginTop: "0.5rem", 
                 fontWeight: "bold", 
                 fontSize: "1.1rem", 
-                textShadow: styles.outlinedText.textShadow 
+                textShadow: styles.outlinedText.textShadow,
+                color: ovr >= 80 ? '#ffd700' : '#fff'
               }}>
                 {renderOVRSymbol(ovr)} OVR: {ovr}
               </p>
