@@ -1,6 +1,6 @@
 import React from 'react';
 import { styles } from '../styles/styles';
-import { teamColors } from '../styles/teamColors';
+import { teamColors } from '../styles/theme';
 import { marchMadnessTeams } from '../data/marchMadnessTeams';
 
 export const TeamDetails = ({ team, onClose }) => {
@@ -51,13 +51,13 @@ export const TeamDetails = ({ team, onClose }) => {
                 {isMarchMadnessPlayer(player.Team) && (
                   <div style={{
                     position: 'absolute',
-                    top: '0.5rem',
-                    right: '0.5rem',
+                    top: '0.25rem',
+                    right: '0.25rem',
                     backgroundColor: '#FFD700',
                     color: '#000',
-                    padding: '0.25rem 0.5rem',
+                    padding: '0.15rem 0.3rem',
                     borderRadius: '4px',
-                    fontSize: '0.9rem',
+                    fontSize: '0.75rem',
                     fontWeight: 'bold',
                     zIndex: 1,
                     boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
