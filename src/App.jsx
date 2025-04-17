@@ -51,14 +51,22 @@ export default function App() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+      
       if (res.ok) {
         setUser(data.username);
         localStorage.setItem('username', data.username);
+        alert(authMode === "login" ? "Login successful!" : "Account registered successfully!");
       } else {
-        alert(data.error);
+        // Handle specific error messages
+        if (data.error && data.error.includes("already exists")) {
+          alert("Username already exists. Please choose a different username.");
+        } else {
+          alert(data.error || "Authentication failed. Please try again.");
+        }
       }
     } catch (err) {
       console.error("Auth error:", err);
+      alert("Could not connect to server. Please try again later.");
     }
   };
 
