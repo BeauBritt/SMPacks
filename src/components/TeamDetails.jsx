@@ -1,6 +1,7 @@
 import React from 'react';
 import { styles } from '../styles/styles';
 import { teamColors } from '../styles/theme';
+import mmLogo from '../assets/mmLogo.png';
 import { marchMadnessTeams } from '../data/marchMadnessTeams';
 
 export const TeamDetails = ({ team, onClose }) => {
@@ -53,17 +54,22 @@ export const TeamDetails = ({ team, onClose }) => {
                     position: 'absolute',
                     top: '0.25rem',
                     right: '0.25rem',
-                    backgroundColor: '#FFD700',
-                    color: '#000',
-                    padding: '0.15rem 0.3rem',
-                    borderRadius: '4px',
-                    fontSize: '0.75rem',
-                    fontWeight: 'bold',
                     zIndex: 1,
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
-                    letterSpacing: '0.05em'
+                    width: '35px',
+                    height: '35px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
-                    MM
+                    <img 
+                      src={mmLogo} 
+                      alt="March Madness" 
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain'
+                      }}
+                    />
                   </div>
                 )}
                 <h3>{player["Player Name"]}</h3>

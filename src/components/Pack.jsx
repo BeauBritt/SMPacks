@@ -4,6 +4,7 @@ import { teamColors } from '../styles/theme';
 import packImage from '../assets/pack.png';
 import flipSound from '../assets/flip.mp3';
 import packRipSound from '../assets/packRip.mp3';
+import mmLogo from '../assets/mmLogo.png';
 import { marchMadnessTeams } from '../data/marchMadnessTeams';
 
 export const Pack = ({ pack, onSelectPlayer, onOpenPack, currentPlayers, maxPlayers }) => {
@@ -219,16 +220,22 @@ export const Pack = ({ pack, onSelectPlayer, onOpenPack, currentPlayers, maxPlay
                         position: 'absolute',
                         top: '0.5rem',
                         right: '0.5rem',
-                        backgroundColor: '#FFD700',
-                        color: '#000',
-                        padding: '0.35rem 0.7rem',
-                        borderRadius: '4px',
-                        fontSize: '1rem',
-                        fontWeight: 'bold',
                         zIndex: 1,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                        width: '40px',
+                        height: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}>
-                        MM
+                        <img 
+                          src={mmLogo} 
+                          alt="March Madness" 
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain'
+                          }}
+                        />
                       </div>
                     )}
                     <h3>{player["Player Name"]}</h3>
