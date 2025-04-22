@@ -260,7 +260,7 @@ export const teamColors = {
   "San Francisco": "#006747",
   "San Jose State": "#0055A2",
   "Santa Clara": "#A6192E",
-  "Seattle U": "#C8102E",
+  "Seattle": "#C8102E",
   "Seton Hall": "#0055A2",
   "Siena": "#006747",
   "South Alabama": "#002147",
