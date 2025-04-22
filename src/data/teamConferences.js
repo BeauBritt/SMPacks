@@ -84,6 +84,7 @@ export const teamConferences = {
   "Georgia": "SEC",
   "Kentucky": "SEC",
   "LSU": "SEC",
+  "Louisiana State": "SEC",
   "Mississippi State": "SEC",
   "Missouri": "SEC",
   "Ole Miss": "SEC",
