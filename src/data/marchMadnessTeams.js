@@ -7,4 +7,4 @@ export const marchMadnessTeams = [
   "High Point", "Purdue", "McNeese", "Clemson", "Georgia", "Gonzaga", "SIU Edwardsville", "Houston",
   "Alabama", "Robert Morris", "Vanderbilt", "Saint Mary's", "Montana", "Wisconsin", "VCU", "BYU",
   "Akron", "Arizona", "Liberty", "Oregon", "Baylor", "Mississippi State", "Mount St. Mary's", "Duke"
-];  
+]; 
