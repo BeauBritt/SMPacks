@@ -6,6 +6,8 @@ import flipSound from '../assets/flip.mp3';
 import packRipSound from '../assets/packRip.mp3';
 import mmLogo from '../assets/mmLogo.png';
 import { marchMadnessTeams } from '../data/marchMadnessTeams';
+import { teamConferences } from '../data/teamConferences';
+import { conferenceLogos } from '../data/conferenceLogos';
 
 export const Pack = ({ pack, onSelectPlayer, onOpenPack, currentPlayers, maxPlayers }) => {
   const [hovering, setHovering] = useState(false);
@@ -215,17 +217,48 @@ export const Pack = ({ pack, onSelectPlayer, onOpenPack, currentPlayers, maxPlay
                       backgroundColor: teamColor,
                     }}
                   >
+                    {isRevealed && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '0.15rem',
+                        left: '0.5rem',
+                        width: '35px',
+                        height: '35px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        padding: '0.15rem',
+                        backgroundColor: 'white',
+                        boxShadow: '0 0 4px rgba(0,0,0,0.3)',
+                        zIndex: 1
+                      }}>
+                        <img
+                          src={conferenceLogos[teamConferences[player.Team]]}
+                          alt={`${teamConferences[player.Team]} logo`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                          }}
+                        />
+                      </div>
+                    )}
                     {isRevealed && isMarchMadnessPlayer(player.Team) && (
                       <div style={{
                         position: 'absolute',
-                        top: '0.5rem',
+                        top: '0.15rem',
                         right: '0.5rem',
-                        zIndex: 1,
-                        width: '40px',
-                        height: '40px',
+                        width: '35px',
+                        height: '35px',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        backgroundColor: 'white',
+                        borderRadius: '50%',
+                        padding: '0.15rem',
+                        boxShadow: '0 0 4px rgba(0,0,0,0.3)',
+                        zIndex: 1
                       }}>
                         <img 
                           src={mmLogo} 
