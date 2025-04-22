@@ -85,7 +85,7 @@ export const TeamDetails = ({ team, onClose }) => {
               style={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain',
+                objectFit: 'contain'
               }}
             />
           </div>
@@ -106,9 +106,9 @@ export const TeamDetails = ({ team, onClose }) => {
             boxShadow: '0 0 4px rgba(0,0,0,0.3)',
             zIndex: 1
           }}>
-            <img 
-              src={mmLogo} 
-              alt="March Madness" 
+            <img
+              src={mmLogo}
+              alt="March Madness"
               style={{
                 width: '100%',
                 height: '100%',

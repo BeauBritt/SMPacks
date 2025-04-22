@@ -19,7 +19,7 @@ export const Leaderboard = ({ leaderboard, onStartGame, onRefreshLeaderboard }) 
     setLoading(true);
     try {
       console.log('Clicked entry:', entry);
-      console.log('Fetching team for username:', entry.username);
+      console.log('Fetching teams for username:', entry.username);
       
       const response = await fetch(`https://backend-sq7r.onrender.com/user/user_teams/${entry.username}`, {
         method: 'GET',
@@ -29,9 +29,6 @@ export const Leaderboard = ({ leaderboard, onStartGame, onRefreshLeaderboard }) 
         }
       });
       
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-      
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', errorText);
@@ -39,22 +36,20 @@ export const Leaderboard = ({ leaderboard, onStartGame, onRefreshLeaderboard }) 
       }
       
       const data = await response.json();
-      console.log('Received data:', data);
+      console.log('Received teams data:', data);
       
-      // Handle both array and object responses
-      let teamData;
-      if (Array.isArray(data)) {
-        if (data.length > 0) {
-          teamData = data[0].players || data[0].team;
-        } else {
-          throw new Error('No team data found');
-        }
-      } else {
-        teamData = data.players || data.team;
+      // Find the team with matching avgOVR
+      const matchingTeam = Array.isArray(data) 
+        ? data.find(team => team.avgOVR === entry.avgOVR)
+        : (data.avgOVR === entry.avgOVR ? data : null);
+      
+      if (!matchingTeam) {
+        throw new Error('No team found with matching average OVR');
       }
       
+      const teamData = matchingTeam.players || matchingTeam.team;
       if (!teamData) {
-        throw new Error('No team data found in response');
+        throw new Error('No team data found in matching team');
       }
       
       setSelectedTeam(teamData);
