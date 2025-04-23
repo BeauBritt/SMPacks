@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { styles } from '../styles/styles';
-import { teamColors } from '../styles/theme';
+import { teamColors } from '../styles/teamColors';
 import packImage from '../assets/pack.png';
 import flipSound from '../assets/flip.mp3';
 import packRipSound from '../assets/packRip.mp3';

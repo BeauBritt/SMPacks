@@ -1,6 +1,6 @@
 import React from 'react';
 import { styles } from '../styles/styles';
-import { teamColors } from '../styles/theme';
+import { teamColors } from '../styles/teamColors';
 import mmLogo from '../assets/mmLogo.png';
 import { marchMadnessTeams } from '../data/marchMadnessTeams';
 import { teamConferences } from '../data/teamConferences';
