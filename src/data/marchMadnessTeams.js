@@ -1,3 +1,4 @@
+// List of teams participating in the current March Madness tournament
 export const marchMadnessTeams = [
   "Auburn", "Alabama State", "Louisville", "Creighton", "Michigan", "UC San Diego", "Texas A&M", "Yale",
   "Duke", "Ole Miss", "North Carolina", "Iowa State", "Lipscomb", "Marquette", "New Mexico", "Bryant",

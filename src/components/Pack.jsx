@@ -1,3 +1,4 @@
+// Component for displaying and managing card packs with player reveals and animations
 import React, { useState } from 'react';
 import { styles } from '../styles/styles';
 import { teamColors } from '../styles/teamColors';

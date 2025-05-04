@@ -1,3 +1,4 @@
+// Handles user authentication with login and registration functionality
 import React, { useState } from 'react';
 import { styles } from '../styles/styles';
 import logoImage from '../assets/smlogo.png';

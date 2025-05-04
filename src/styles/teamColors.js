@@ -1,3 +1,4 @@
+// Maps each college basketball team to their primary school color in hex format
 export const teamColors = {
   // ACC Teams
   "Duke": "#001A57",

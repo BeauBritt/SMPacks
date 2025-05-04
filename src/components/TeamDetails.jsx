@@ -1,3 +1,4 @@
+// Modal component showing detailed view of a team's roster and player statistics
 import React from 'react';
 import { styles } from '../styles/styles';
 import { teamColors } from '../styles/teamColors';

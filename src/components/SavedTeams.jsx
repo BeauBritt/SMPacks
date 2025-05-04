@@ -1,3 +1,4 @@
+// Modal component for viewing and managing a user's saved teams with detailed player statistics
 import React, { useState, useEffect } from 'react';
 import { styles } from '../styles/styles';
 import { teamColors } from '../styles/teamColors';

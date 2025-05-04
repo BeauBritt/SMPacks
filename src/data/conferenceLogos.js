@@ -1,3 +1,4 @@
+// Maps each conference to its corresponding logo image asset
 import accLogo from '../assets/acc.png';
 import big12Logo from '../assets/big12.png';
 import bigeastLogo from '../assets/bigeast.png';

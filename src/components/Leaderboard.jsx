@@ -1,3 +1,4 @@
+// Displays the global leaderboard with team rankings and allows viewing team details
 import React, { useState, useEffect } from 'react';
 import { styles } from '../styles/styles';
 import { TeamDetails } from './TeamDetails';

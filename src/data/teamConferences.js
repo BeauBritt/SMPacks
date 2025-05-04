@@ -1,3 +1,4 @@
+// Maps each college basketball team to their respective conference
 export const teamConferences = {
   // ACC Teams
   "Boston College": "ACC",

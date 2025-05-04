@@ -1,3 +1,4 @@
+// Displays a team's roster with player cards showing stats and conference information
 import React from 'react';
 import { styles } from '../styles/styles';
 import { teamColors } from '../styles/teamColors';
